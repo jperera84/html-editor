@@ -84,6 +84,7 @@ class HtmlEditor extends LitElement {
                 margin-right: 0.5em;
                 margin-left: 0.5em;
                 box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                background-color: #827717;
             }
             .icon-class-actions svg {
                 margin-top: 0.2em;
@@ -150,7 +151,7 @@ class HtmlEditor extends LitElement {
                         </div>
                     </div>
                     <div class="toolbar-ribbon">
-
+                        
                     </div>
                 </div>
                 <textarea class="edit-container" placeholder="Start typing" contenteditable></textarea>
