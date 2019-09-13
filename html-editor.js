@@ -1,18 +1,18 @@
 import { LitElement, html, css } from 'lit-element';
-import { editorIcon, printIcon, downloadIcon, uploadIcon } from "./editor-icons.js";
+import { editorIcon, printIcon, downloadIcon, uploadIcon, cutIcon, pasteIcon, copyIcon, redoIcon, undoIcon, 
+        boldIcon, italicIcon, underlineIcon, removeFormatIcon, formatBlockIcon, fontIcon, fontSizeIcon,
+        removeIdentationIcon, addIndentationIcon, leftAlignIcon, rightAlignIcon, centerAlignIcon,
+        numberlistIcon, dottedListIcon } from "./editor-icons.js";
 
 class HtmlEditor extends LitElement {
 
     constructor() {
         super();
-        this.parseRichTextTools();
     }
 
     static get properties() {
         return { 
-            title: { type: String },
-            menus: { type: Array },
-            buttons: { type: Array }
+            title: { type: String }
         };
     }
 
@@ -22,6 +22,7 @@ class HtmlEditor extends LitElement {
                 display: block;
                 height: 100%;
                 width: 100%;
+                font-family: 'Roboto', sans-serif;
             }
             .container {
                 display: flex;
@@ -71,6 +72,7 @@ class HtmlEditor extends LitElement {
                 display: flex;
                 width: 100%;
                 align-items: center;
+                padding-bottom: 0.3em;
             }
             .icon-class svg {
                 fill: white;
@@ -94,7 +96,6 @@ class HtmlEditor extends LitElement {
                 display: flex;
                 flex-frow: 1;
                 color: white;
-                font-family: 'Roboto', sans-serif;
                 letter-spacing: 0.03em;
             }
             .toolbar-action-icons {
@@ -130,9 +131,67 @@ class HtmlEditor extends LitElement {
                 transition: 0s;
             }
             .toolbar-ribbon {
-                display: flex;
+                display: grid;
                 width: 100%;
                 min-height: 4em;
+                grid-template-columns: repeat(auto-fit, minmax(5em, 2fr));
+            }
+            @media only screen and (min-width: 600px) {
+                .toolbar-ribbon {
+                    display: flex;
+                    width: 100%;
+                    min-height: 4em;
+                }
+            }
+            .toolbar-ribbon-group {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                width: auto;
+                min-width: 2em;
+                height: fit-content;
+                border-radius: 0.3em;
+                border-style: solid;
+                border-width: 0.05em;
+                border-color: #455A64;
+                margin:0.3em;
+            }
+            .icon-class-button {
+                border-radius: 0.5em;
+                height: 2em;
+                width: 2em;
+                margin: 0.2em;
+                text-align: center;
+                box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                background-color: #827717;
+            }
+            .icon-class-button svg {
+                margin-top: 0.2em;
+                fill: #9CCC65;
+            }
+            .button-dropdown {
+                position: relative;
+                display: flex;
+            }
+            .dropdown-content {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                background-color: #f1f1f1;
+                overflow: auto;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+                top: 2em;
+                max-height: 10em;
+            }
+            .show {display: flex;}
+            option {
+                color: #455A64;
+                padding: 0.8em 1em;
+                display: block;
+            }
+            .dropdown-content option:hover {
+                background-color: #9CCC65;
             }
         `;
     } 
@@ -151,7 +210,69 @@ class HtmlEditor extends LitElement {
                         </div>
                     </div>
                     <div class="toolbar-ribbon">
-                        
+                        <div class="toolbar-ribbon-group">
+                            <i class="icon-class-button ripple" title="Cut">${cutIcon}</i>
+                            <i class="icon-class-button ripple" title="Copy">${copyIcon}</i>
+                            <i class="icon-class-button ripple" title="Paste">${pasteIcon}</i>
+                            <i class="icon-class-button ripple" title="Undo">${undoIcon}</i>
+                            <i class="icon-class-button ripple" title="Redo">${redoIcon}</i>
+                        </div>
+                        <div class="toolbar-ribbon-group">
+                            <i class="icon-class-button ripple" title="Bold">${boldIcon}</i>
+                            <i class="icon-class-button ripple" title="Italic">${italicIcon}</i>
+                            <i class="icon-class-button ripple" title="Underline">${underlineIcon}</i>
+                            <i class="icon-class-button ripple" title="Remove formatting">${removeFormatIcon}</i>
+                        </div>
+                        <div class="toolbar-ribbon-group">
+                            <i class="icon-class-button ripple" title="Format Block" @click="${ e => this.formatOptionsButtonDropdown.classList.toggle("show") }" >${formatBlockIcon}</i>
+                            <div class="button-dropdown">
+                                <div id="format-list" class="dropdown-content">
+                                    <option value="">- formatting -</option>
+                                    <option value="h1">Title 1 &lt;h1&gt;</option>
+                                    <option value="h2">Title 2 &lt;h2&gt;</option>
+                                    <option value="h3">Title 3 &lt;h3&gt;</option>
+                                    <option value="h4">Title 4 &lt;h4&gt;</option>
+                                    <option value="h5">Title 5 &lt;h5&gt;</option>
+                                    <option value="h6">Title 6 &lt;h6&gt;</option>
+                                    <option value="p">Paragraph &lt;p&gt;</option>
+                                    <option value="pre">Preformatted &lt;pre&gt;</option>
+                                </div>
+                            </div>
+                            <i class="icon-class-button ripple" title="Fonts" @click="${ e => this.fontsOptionsButtonDropdown.classList.toggle("show") }" >${fontIcon}</i>
+                            <div class="button-dropdown">
+                                <div id="font-list" class="dropdown-content">
+                                    <option value="">- font -</option>
+                                    <option value="Arial">Arial</option>
+                                    <option value="Arial Black">Arial Black</option>
+                                    <option value="Courier New">Courier New</option>
+                                    <option value="Times New Roman">Times New Roman</option>
+                                </div>
+                            </div>
+                            <i class="icon-class-button ripple" title="Fonts" @click="${ e => this.fontSizeOptionsButtonDropdown.classList.toggle("show") }" >${fontSizeIcon}</i>
+                            <div class="button-dropdown">
+                                <div id="font-size-list" class="dropdown-content">
+                                    <option value="">- font size -</option>
+                                    <option value="1">Very small</option>
+                                    <option value="2">A bit small</option>
+                                    <option value="3">Normal</option>
+                                    <option value="4">Medium-large</option>
+                                    <option value="5">Big</option>
+                                    <option value="6">Very big</option>
+                                    <option value="7">Maximum</option>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="toolbar-ribbon-group">
+                            <i class="icon-class-button ripple" title="Left align">${leftAlignIcon}</i>
+                            <i class="icon-class-button ripple" title="Center align">${centerAlignIcon}</i>
+                            <i class="icon-class-button ripple" title="Right align">${rightAlignIcon}</i>
+                            <i class="icon-class-button ripple" title="Delete indentation">${removeIdentationIcon}</i>
+                            <i class="icon-class-button ripple" title="Add indentation">${addIndentationIcon}</i>
+                        </div>
+                        <div class="toolbar-ribbon-group">
+                            <i class="icon-class-button ripple" title="Numbered list">${numberlistIcon}</i>
+                            <i class="icon-class-button ripple" title="Dotted list">${dottedListIcon}</i>
+                        </div>
                     </div>
                 </div>
                 <textarea class="edit-container" placeholder="Start typing" contenteditable></textarea>
@@ -162,15 +283,12 @@ class HtmlEditor extends LitElement {
         `;
     }
 
-    parseRichTextTools() {
-        let self = this;
-        fetch("rich-text-tools.json")
-        .then(response => response.json())
-        .then(data => {
-            self.menus = data.menus;
-            self.buttons = data.buttons;
-        });
+    firstUpdated() {
+        this.formatOptionsButtonDropdown = this.shadowRoot.querySelector("#format-list");
+        this.fontsOptionsButtonDropdown = this.shadowRoot.querySelector("#font-list");
+        this.fontSizeOptionsButtonDropdown = this.shadowRoot.querySelector("#font-size-list");
     }
+
 }
 // Register the new element with the browser.
 customElements.define('html-editor', HtmlEditor);

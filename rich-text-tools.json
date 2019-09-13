@@ -128,15 +128,15 @@
 		}, {
 			"text": "Cut",
 			"command": "cut",
-			"image": "icons\/cut.gif"
+			"image": "cutIcon"
 		}, {
 			"text": "Copy",
 			"command": "copy",
-			"image": "icons\/copy.gif"
+			"image": "copyIcon"
 		}, {
 			"text": "Paste",
 			"command": "paste",
-			"image": "icons\/paste.gif"
+			"image": "pasteIcon"
 		}
 	]
 }
